@@ -3,7 +3,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { userSignUp } from "../api/user.auth";
+import { userSignUp } from "../api/user.api";
 import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 
@@ -44,7 +44,7 @@ const Signup = () => {
 
     if (response) {
       toast.success("Signup success");
-      navigate("/signin");
+      navigate("/login");
     }
 
     if (err) toast.error(err.message);
@@ -58,7 +58,7 @@ const Signup = () => {
           name="username"
           value={form.values.username}
           onChange={form.handleChange}
-          error={form.touched.username && form.errors.username != undefined}
+          error={form.touched.username && form.errors.username !== undefined}
           helperText={form.touched.username && form.errors.username}
         />
         <TextField
@@ -68,7 +68,7 @@ const Signup = () => {
           name="password"
           value={form.values.password}
           onChange={form.handleChange}
-          error={form.touched.password && form.errors.password != undefined}
+          error={form.touched.password && form.errors.password !== undefined}
           helperText={form.touched.password && form.errors.password}
         />
         <TextField
@@ -78,7 +78,7 @@ const Signup = () => {
           name="confirmPassword"
           value={form.values.confirmPassword}
           onChange={form.handleChange}
-          error={form.touched.confirmPassword && form.errors.confirmPassword != undefined}
+          error={form.touched.confirmPassword && form.errors.confirmPassword !== undefined}
           helperText={form.touched.confirmPassword && form.errors.confirmPassword}
         />
         <LoadingButton
@@ -88,10 +88,10 @@ const Signup = () => {
           loading={isRequest}
           color="success"
         >
-          signup
+          Register
         </LoadingButton>
-        <Button component={Link} to="/signin" size="small">
-          signin
+        <Button component={Link} to="/login" size="small">
+          login
         </Button>
       </Stack>
     </Box>

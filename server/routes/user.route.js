@@ -31,14 +31,11 @@ router.post(
 )
 
 router.get(
-    '/check-tokern',
+    "/check-token",
     tokenAuth,
-    (req, res) => {
-        res.status(200).json({
-            username:req.user.username,
-            message: `Welcome ${req.user.username}, you aer logged in!`
-        })
-    }
-)
+    (req, res) => res.status(200).json({
+      username: req.user.username
+    })
+  );
  
 export default router;

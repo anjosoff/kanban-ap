@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userCheckTkn } from "../api/user.api";
-import Loading from "./Loading";
+import Loading from "./common/Loading";
 
 const ProtectedRoute = (props) => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const ProtectedRoute = (props) => {
 
       if (err) {
         localStorage.removeItem("tkn");
-        navigate("/signin");
+        navigate("/login");
       }
 
       if (response) {
@@ -29,7 +29,7 @@ const ProtectedRoute = (props) => {
     const tkn = localStorage.getItem("tkn");
 
     if (tkn) checkToken();
-    else navigate("/signin");
+    else navigate("/login");
   }, [navigate]);
 
   return (
