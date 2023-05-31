@@ -33,7 +33,7 @@ function App() {
           } />
           <Route path="/boards" element={
             <ProtectedRoute>
-              <Home />
+              <Board />
             </ProtectedRoute>
           }/>
           <Route path="/boards/:boardId" element={

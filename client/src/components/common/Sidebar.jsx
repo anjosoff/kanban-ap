@@ -1,13 +1,13 @@
 import { useSelector, useDispatch } from "react-redux"
-import { Box, Drawer, IconButton, List, ListItem, Typography } from "@mui/material"
+import { Box, Drawer, IconButton, List, ListItem, ListItemButton, Typography } from "@mui/material"
 import assets from '../../assets/index'
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined'
 import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined'
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import boardApi from '../../api/boards.api'
 import { setBoards } from "../../redux/features/boardSlice"
-import {useNavigate, useParams} from 'react-router-dom'
-
+import {Link, useNavigate, useParams} from 'react-router-dom'
+import {DragDropContext,Draggable, Droppable }  from 'react-beautiful-dnd'
 
 const Sidebar = () => {
   
@@ -16,6 +16,7 @@ const Sidebar = () => {
   const boards = useSelector((state) => state.board.value)
   const dispatch = useDispatch()
   const {boardId} = useParams()
+  const [activeIndex, setActiveIndex] = useState(0)
   const sidebarWidth=250
   useEffect(() =>{
     const getBoards = async () =>{
@@ -29,16 +30,26 @@ const Sidebar = () => {
       }catch (err){
         alert(err)
       }
-      getBoards()
     }
+    getBoards()
   }, [])
 
   useEffect(() =>{
     console.log(boards)
   }, [boards])
+
+  const updateActive = (listBoard) =>{
+    const activeItem = listBoard.findIndex(e => e._id === boardId)
+    setActiveIndex(activeItem)
+  }
+
   const logout = ()=>{
     localStorage.removeItem('tkn')
     window.location.reload()
+  }
+
+  const onDragEnd = ( e )=>{
+
   }
 
   return (
@@ -112,6 +123,56 @@ const Sidebar = () => {
           </IconButton>
         </Box>
       </ListItem>
+
+      <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable key={'list-board-droppable'} droppableId={'list-board-droppable'}>
+           {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+
+            {
+              boards.map((item,index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index}>
+
+                  {(provided, snapshot) =>(
+
+                    <ListItemButton
+                    ref={provided.innerRef}
+                    {...provided.dragHandleProps}
+                    {...provided.draggableProps}
+                    selected={index === activeIndex}
+                    component={Link}
+                    to={`/boards/${item._id}`}
+                    sx={{
+                      pl:'20px',
+                      cursor:snapshot.isDragging ? 'grab' : 'pointer!important'
+
+                    }}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight="700"
+                        sx={{
+                          whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'
+                        }}
+                      >
+
+                        {item.icon} {item.title}
+
+                      </Typography>
+
+                    </ListItemButton>
+
+                  )}
+                </Draggable>
+              ))
+            }
+
+            </div>
+           )}
+          </Droppable>
+      </DragDropContext>
+
+
     </List>
 
    </Drawer>
