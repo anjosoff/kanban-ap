@@ -1,89 +1,54 @@
-import Header from "../components/common/Header";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import { Box } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useDispatch } from "react-redux";
+import { setBoards } from "../redux/features/boardSlice";
 import { useNavigate } from "react-router-dom";
-import { Stack, Box, Typography, IconButton} from "@mui/material";
+import boardApi from "../api/boards.api";
+import { useState } from "react";
 
 
-const HomePage = () => {
-  const username = localStorage.getItem("username");
+const Home = ()=>{
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+  console.log('gerando a home')
 
+  const createBoard = async ()=>{
+    setLoading(true)
+    try{
 
-  const onSignOut = () => {
-    localStorage.removeItem("tkn");
-    navigate("/login");
+      const res = await boardApi.create()
+      console.log(res)
+      dispatch(setBoards([res]))
+      navigate(`/boards/${res._id}`)
 
+    }catch (err){
+      alert(err)
+    }finally{
+      setLoading(false)
+    }
   }
 
 
-  return (
-    <Stack
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{ height: "100%" }}
-    >
-      <Header bg borderBottom>
-        <Box sx={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
-          paddingX: 2,
-          maxWidth: "md"
-        }}>
-          <Typography
-            variant="h6"
-            fontWeight="700"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {username}
-          </Typography>
-          <IconButton
-            onClick={onSignOut}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              right: "16px",
-              transform: "translateY(-50%)"
-            }}
-          >
-            <LogoutOutlinedIcon />
-          </IconButton>
-        </Box>
-      </Header>
-
-      <Box sx={{
-        height: "100%",
-        position: "fixed",
-        zIndex: 1,
-        maxWidth: "md",
-        width: "100%",
-        overflowY: "auto",
-        paddingTop: "60px",
-        paddingBottom: "90px",
-        "&::-webkit-scrollbar": {
-          width: "0px"
-        }
-      }}>
-
-      </Box>
-
-      <Stack
-        width="100%"
-        alignItems="center"
-        justifyContent="center"
-        borderTop="1px solid #2c2c2c"
-        bgcolor="#000"
-        zIndex={3}
+  return(
+    <Box sx={{
+      height:'100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <LoadingButton
+      variant='outlined'
+      color='success'
+      onClick={createBoard}
+      loading={loading}
       >
-      </Stack>
-    </Stack>
-  );
-};
+        Clique aqui para criar um novo quadro
+      </LoadingButton>
+    </Box>
+  )
+}
 
-export default HomePage;
+
+export default Home 

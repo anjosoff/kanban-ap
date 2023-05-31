@@ -5,8 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register';
-
-import { ToastContainer } from "react-toastify";
+import Board from './pages/Board'
 import CssBaseline  from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
@@ -25,16 +24,6 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline/>
 
-      <ToastContainer
-        position="bottom-left"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnHover
-      />
-
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
@@ -42,6 +31,16 @@ function App() {
               <Home />
             </ProtectedRoute>
           } />
+          <Route path="/boards" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }/>
+          <Route path="/boards/:boardId" element={
+            <ProtectedRoute>
+              <Board />
+            </ProtectedRoute>
+          }/>
           <Route path="/login" element={
             <AuthRoute>
               <Login />
