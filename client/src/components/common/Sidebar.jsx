@@ -13,45 +13,71 @@ const Sidebar = () => {
   
   const user = useSelector((state) => state.user.value)
   const navigate = useNavigate()
-  const boards = useSelector((state) => state.board.value)
+  const boards = useSelector((state) => state.board.value) || []
   const dispatch = useDispatch()
   const {boardId} = useParams()
   const [activeIndex, setActiveIndex] = useState(0)
   const sidebarWidth=250
   useEffect(() =>{
     const getBoards = async () =>{
+      
+
       try{
         const res = await boardApi.getAll()
         dispatch(setBoards(res))
-        if(res.length >0 && boardId === undefined){
-          navigate(`/boards/${res[0]._id}`)
-        }
-
+        
       }catch (err){
+        
         alert(err)
       }
     }
     getBoards()
-  }, [])
+  }, [dispatch])
 
   useEffect(() =>{
-    console.log(boards)
-  }, [boards])
+    const activeItem = boards.findIndex(e => e._id === boardId)
+    if(boards.length >0 && boardId === undefined){
+      navigate(`/boards/${boards[0]._id}`)
+    }
 
-  const updateActive = (listBoard) =>{
-    const activeItem = listBoard.findIndex(e => e._id === boardId)
     setActiveIndex(activeItem)
-  }
+  }, [boards, boardId,navigate])
 
+  
   const logout = ()=>{
     localStorage.removeItem('tkn')
     window.location.reload()
+
+    
   }
 
-  const onDragEnd = ( e )=>{
+  const onDragEnd = async ({source, destination})=>{
+    const newList= [... boards]
+    const [removed] = newList.splice(source.index, 1)
+    newList.splice(destination.index, 0, removed)
 
+    const activeItem= newList.findIndex(e => e._id === boardId)
+    setActiveIndex(activeItem)
+    dispatch(setBoards(newList))
+    try{
+      await boardApi.updatePosition({boards: newList})
+    }catch(err){
+      alert(err)
+
+
+    }
   }
 
+  const addBoard= async () =>{
+    try{
+      const res = await boardApi.create()
+      const newList = [res, ...boards]
+      dispatch(setBoards(newList))
+      navigate(`/boards/${res._id}`)
+    }catch(err){
+      alert(err)
+    }
+  }
   return (
    <Drawer
     container={window.document.body}
@@ -118,59 +144,49 @@ const Sidebar = () => {
           <Typography variant="body2" fontWeight='700'>
             Privado
           </Typography>
-          <IconButton >
+          <IconButton onClick={addBoard} >
             <AddBoxOutlined fontSize="small"/>
           </IconButton>
         </Box>
       </ListItem>
 
       <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable key={'list-board-droppable'} droppableId={'list-board-droppable'}>
-           {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-
-            {
-              boards.map((item,index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-
-                  {(provided, snapshot) =>(
-
-                    <ListItemButton
-                    ref={provided.innerRef}
-                    {...provided.dragHandleProps}
-                    {...provided.draggableProps}
-                    selected={index === activeIndex}
-                    component={Link}
-                    to={`/boards/${item._id}`}
-                    sx={{
-                      pl:'20px',
-                      cursor:snapshot.isDragging ? 'grab' : 'pointer!important'
-
-                    }}
-                    >
-                      <Typography
-                        variant="body2"
-                        fontWeight="700"
-                        sx={{
-                          whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'
-                        }}
-                      >
-
-                        {item.icon} {item.title}
-
-                      </Typography>
-
-                    </ListItemButton>
-
-                  )}
-                </Draggable>
-              ))
-            }
-
-            </div>
-           )}
+          <Droppable key={'list-board-droppable-key'} droppableId={'list-board-droppable'}>
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {
+                  boards.map((item, index) => (
+                    <Draggable key={item._id} draggableId={item._id} index={index}>
+                      {(provided, snapshot) => (
+                        <ListItemButton
+                          ref={provided.innerRef}
+                          {...provided.dragHandleProps}
+                          {...provided.draggableProps}
+                          selected={index === activeIndex}
+                          component={Link}
+                          to={`/boards/${item._id}`}
+                          sx={{
+                            pl: '20px',
+                            cursor: snapshot.isDragging ? 'grab' : 'pointer!important'
+                          }}
+                        >
+                          <Typography
+                            variant='body2'
+                            fontWeight='700'
+                            sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                          >
+                            {item.icon} {item.title}
+                          </Typography>
+                        </ListItemButton>
+                      )}
+                    </Draggable>
+                  ))
+                }
+                {provided.placeholder}
+              </div>
+            )}
           </Droppable>
-      </DragDropContext>
+        </DragDropContext>
 
 
     </List>

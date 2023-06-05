@@ -24,4 +24,39 @@ export const boardGetAll = async (req, res) => {
       } catch (err) {
         res.status(500).json(err)
       }
+} 
+
+export const updatePosition = async (req, res) =>{
+  const {boards} = req. body
+  try{
+    for (const key in boards.reverse())  {
+      const board= boards[key]
+      await Board.findByIdAndUpdate(
+        board._id, 
+        {$set: {position: board.position + 1 }}
+        
+        )
+    }
+    res.status(200).json('Updated!')
+  }catch (err){
+    res.status(500).json(err)
+
+  }
+}
+
+export const getOne = async (req, res) => {
+  const { boardId } = req.params
+  try {
+    const board = await Board.findOne({ user: req.user._id, _id: boardId })
+    if (!board) return res.status(404).json('Board not found')
+    const sections = await Section.find({ board: boardId })
+    for (const section of sections) {
+      const tasks = await Task.find({ section: section.id }).populate('section').sort('-position')
+      section._doc.tasks = tasks
+    }
+    board._doc.sections = sections
+    res.status(200).json(board)
+  } catch (err) {
+    res.status(500).json(err)
+  }
 }

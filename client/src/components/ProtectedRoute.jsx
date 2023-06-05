@@ -12,7 +12,7 @@ const ProtectedRoute = (props) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state) => state.user.value)
-  console.log(user);
+  
   useEffect(() => {
     const checkToken = async () => {
       setIsLoading(true);
