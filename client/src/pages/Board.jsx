@@ -4,8 +4,8 @@ import boardApi from '../api/boards.api'
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined'
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
-import {EmojiPIcker} from 'emoji-mart'
-import { Box, IconButton, TextField } from '@mui/material'
+import { Box, Button, Divider, IconButton, TextField, Typography } from '@mui/material'
+import EmojiPicker from '../components/common/EmojiPicker'
 
 const Board = () => {
   const {boardId} = useParams()
@@ -24,14 +24,19 @@ const Board = () => {
         setSections(res.sections)
         setIsFavourite(res.favourite)
         setIcon(res.icon)
-        console.log(res)
-        console.log(isFavourite)
       } catch (err) {
         alert(err)
       }
     }
     getBoard()
   }, [boardId])
+
+  const onIconChange = (newIcon) =>{
+    //let temp = [...boards]
+    setIcon(newIcon)
+
+  }
+
   return (
     <>
       <Box sx={{
@@ -55,31 +60,51 @@ const Board = () => {
           </IconButton>
       </Box>
       <Box sx={{padding: '10px 50px',}}>
-          {/* {emoji picker} */}
+         <Box>
+            <EmojiPicker icon={icon} onChange={onIconChange}/>
+            <TextField
+              value={title}
+              placeholder='Untitled'
+              variant='outlined'
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-input':{padding:0},
+                '& .MuiOutlinedInput-notchedOutline':{border:'unset'},
+                '& .MuiOutlinedInput-root':{fontSize:'2rem', fontWeight:'700'},
+              }}
+            />
+            <TextField
+              value={description}
+              placeholder='Add a description'
+              variant='outlined'
+              multiline
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-input':{padding:0},
+                '& .MuiOutlinedInput-notchedOutline':{border:'unset'},
+                '& .MuiOutlinedInput-root':{fontSize:'0.8 rem'},
+              }}
+            />
+          </Box> 
+      <Box>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          
+        }}>
+          <Button>
+            Add section
+          </Button>
+          <Typography variant='body2' fontWeight='700' >
+            {sections.length} Sections
+          </Typography>
+        </Box>
+        <Divider sx={{margin:'10px 0'}}/>
+        {/* KANBAN BOARD */}
       </Box>
-      <TextField
-        value={title}
-        placeholder='Untitled'
-        variant='outlined'
-        fullWidth
-        sx={{
-          '& .MuiOutlinedInput-input':{padding:0},
-          '& .MuiOutlinedInput-notchedOutline':{border:'unset'},
-          '& .MuiOutlinedInput-root':{fontSize:'2rem', fontWeight:'700'},
-        }}>
-      </TextField>
-      <TextField
-        value={description}
-        placeholder='Add a description'
-        variant='outlined'
-        multiline
-        fullWidth
-        sx={{
-          '& .MuiOutlinedInput-input':{padding:0},
-          '& .MuiOutlinedInput-notchedOutline':{border:'unset'},
-          '& .MuiOutlinedInput-root':{fontSize:'0.8 rem'},
-        }}>
-      </TextField>
+      </Box>
+      
     </>
   )
 }
