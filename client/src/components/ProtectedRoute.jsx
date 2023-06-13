@@ -1,12 +1,11 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { userCheckTkn } from "../api/user.api";
 import Loading from "./common/Loading";
 import { setUser } from "../redux/features/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "./common/Sidebar";
-import Home from "../pages/Home";
 const ProtectedRoute = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

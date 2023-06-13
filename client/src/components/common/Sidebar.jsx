@@ -82,7 +82,7 @@ const Sidebar = () => {
    <Drawer
     container={window.document.body}
     variant= 'permanent'
-    anchor="right"
+    anchor="left"
     open={true}
     sx={{
       width:sidebarWidth,
