@@ -41,7 +41,7 @@ const Sidebar = () => {
     }
 
     setActiveIndex(activeItem)
-  }, [boards, boardId,navigate])
+  },  [boards, boardId,navigate])
 
   
   const logout = ()=>{
@@ -51,8 +51,8 @@ const Sidebar = () => {
     
   }
 
-  const onDragEnd = async ({source, destination})=>{
-    const newList= [... boards]
+  const onDragEnd = async ({source, destination}) => {
+    const newList = [...boards]
     const [removed] = newList.splice(source.index, 1)
     newList.splice(destination.index, 0, removed)
 
@@ -187,10 +187,7 @@ const Sidebar = () => {
             )}
           </Droppable>
         </DragDropContext>
-
-
     </List>
-
    </Drawer>
   )
 }
